@@ -2,11 +2,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+interface Assignment {
+  id: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string
+}
+
 const  StudentAssignmentPage=()=> {
  
- const [assignments, setAssignments] = useState<any[]>([]);
+ const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     async function fetchAssignments() {
@@ -19,9 +27,8 @@ const  StudentAssignmentPage=()=> {
 
         const data = await res.json();
         setAssignments(data);
-      } catch (err: any) {
-        console.error("Error fetching assignments:", err);
-        setError(err.message);
+      } catch (err) {
+        console.log("Error fetching assignments:", err);
       } finally {
         setLoading(false);
       }
@@ -31,7 +38,7 @@ const  StudentAssignmentPage=()=> {
   }, []);
 
   if (loading) return <p className="text-gray-500">Loading assignments...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  
 
   return (
     <section>
@@ -52,7 +59,7 @@ const  StudentAssignmentPage=()=> {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {assignments.map((a: any) => (
+              {assignments.map((a: Assignment) => (
                 <tr key={a.id}>
                   <td className="px-6 py-4 font-medium text-gray-900">{a.title}</td>
                   <td className="px-6 py-4 text-gray-600">{a.description}</td>

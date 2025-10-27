@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Assignment {
   id: number;
@@ -70,7 +71,9 @@ const  CoursePage = ()=> {
 
         {/* Lecturer Section */}
         <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex items-center space-x-4">
-          <img
+          <Image
+           width={300}
+      height={300}
             src="https://randomuser.me/api/portraits/men/45.jpg"
             alt="Lecturer"
             className="w-14 h-14 rounded-full object-cover"

@@ -1,5 +1,4 @@
 import { Navbar } from "@/app/components/Navbar"
-import Menu from "../../components/Menu"
 
 const DashboardLayout = ({children}:Readonly<{children:React.ReactNode}>) => {
   return (

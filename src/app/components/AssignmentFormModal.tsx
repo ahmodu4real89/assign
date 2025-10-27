@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 interface AssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lecturerId?: number;
   courseId?:number;
   onSuccess?: () => void;
   initialData?: {
@@ -19,7 +18,6 @@ interface AssignmentModalProps {
 export default function AssignmentFormModal({
   isOpen,
   onClose,
-  lecturerId,
   courseId,
   onSuccess,
   initialData,

@@ -1,12 +1,10 @@
 "use client"
 import AssignmentFormModal from "@/app/components/AssignmentFormModal";
 import { useUser } from "@/app/context/UserContext";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
-
-
+import Image from "next/image";
 
 interface Assignment {
   id: number;
@@ -38,39 +36,35 @@ const  CoursePage = ()=> {
   const id = Number(params.id); 
   const [course, setCourse] = useState<CourseApiResponse>();
   const [loading, setLoading] = useState(true);
-    const [editCourse, setEditCourse] = useState<any | null>(null);
+    const [editCourse, setEditCourse] = useState<Assignment | null>(null);
   const [showModal, setShowModal] = useState(false);
-   const [refreshKey, setRefreshKey] = useState(0);
-   //const handleRefresh = () => setRefreshKey((prev) => prev + 1);
+   
 
    const handleEdit = (assignment: Assignment) => {
     setEditCourse(assignment);
     setShowModal(true);
   };
 
-    const fetchCourse= async ()=> {
-      try {
-    
-        const res = await fetch(`/api/course/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch course");
-        const data = await res.json();
-        console.log(data, 'dats')
-        setCourse(data);
-      } catch (error) {
-        console.error("Error fetching course:", error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchCourse = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/course/${id}`);
+      if (!res.ok) throw new Error("Failed to fetch course");
+      const data = await res.json();
+      setCourse(data);
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [id]); // only depends on id
 
-     const handleRefresh = () => {
-    fetchCourse(); 
+  const handleRefresh = () => {
+    fetchCourse();
   };
 
   useEffect(() => {
     if (id) fetchCourse();
-  },  [id]);
-
+  }, [id, fetchCourse]); // ✅ no ESLint warning now
 
   if (loading) return <p>Loading course details...</p>;
   if (!course) return <p>Course not found</p>;
@@ -92,7 +86,9 @@ const  CoursePage = ()=> {
 
         {/* Lecturer Section */}
         <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex items-center space-x-4">
-          <img
+          <Image
+           width={300}
+      height={300}
             src="https://randomuser.me/api/portraits/men/45.jpg"
             alt="Lecturer"
             className="w-14 h-14 rounded-full object-cover"
