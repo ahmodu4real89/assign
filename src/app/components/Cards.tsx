@@ -1,6 +1,14 @@
+"use client"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const Cards = () => {
+  
+    const router = useRouter();
+   const handleClick = (role: string) => {
+    router.push(`/login?role=${role}`);
+  };
+
   return (
     <div className=" dark:bg-gray-900 font-sans text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -17,19 +25,20 @@ export const Cards = () => {
 
           {/* Buttons */}
           <div className="space-y-4">
-            <Link
-              href="/login"
+            <button
+            
+               onClick={() => handleClick("STUDENT")}
               className="block w-full text-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-300"
             >
               Student
-            </Link>
+            </button>
 
-            <Link
-              href="/login"
+            <button
+               onClick={() => handleClick("LECTURER")}
               className="block w-full text-center bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold py-3 px-4 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-300"
             >
               Lecturer
-            </Link>
+            </button>
           </div>
 
           {/* Footer Links */}

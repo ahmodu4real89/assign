@@ -1,6 +1,10 @@
+"use client"
+import { useUser } from "@/app/context/UserContext";
 import Menu from "../../components/Menu"
 
+
 const DashboardLayout = ({children}:Readonly<{children:React.ReactNode}>) => {
+  const { user} = useUser();
   return (
     <div className='h-screen flex'>
         <div className="w-[14%] md:w-[14%] lg:w[16%] xl:w:[14%] p-4">
@@ -12,7 +16,7 @@ const DashboardLayout = ({children}:Readonly<{children:React.ReactNode}>) => {
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <h2 className="font-semibold text-gray-800">Dr. Amelia Harper</h2>
+              <h2 className="font-semibold text-gray-800">{user?.name || "Admin"}</h2>
          </div>
           </div>
             <Menu/>
