@@ -1,116 +1,80 @@
-"use client";
+"use client"
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const  StudentAssignmentPage=()=> {
+ 
+ const [assignments, setAssignments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAssignments() {
+      try {
+        const res = await fetch("/api/assignment", { cache: "no-store" });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch assignments: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        setAssignments(data);
+      } catch (err: any) {
+        console.error("Error fetching assignments:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAssignments();
+  }, []);
+
+  if (loading) return <p className="text-gray-500">Loading assignments...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+
   return (
-    <div>
+    <section>
+      <h2 className="text-lg font-semibold mb-4">Assignments</h2>
 
-
-      {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-8 ">
-            <h2 className="text-3xl font-bold tracking-tight">Submit Assignment</h2>
-            <p className="text-muted-light dark:text-muted-dark mt-1">
-              Course: Introduction to Programming
-            </p>
-          </div>
-
-          <div className="space-y-8">
-            {/* Assignment Details */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold border-b border-gray-300 pb-3 mb-4">
-                Assignment Details
-              </h3>
-              <div className="space-y-3 text-sm">
-                <p>
-                  <span className="font-semibold">Title:</span> Programming Basics
-                </p>
-                <p>
-                  <span className="font-semibold">Due Date:</span> October 20, 2024, 11:59 PM
-                </p>
-                <div>
-                  <p className="font-semibold mb-1">Instructions:</p>
-                  <p className="text-muted-light dark:text-muted-dark">
-                    Write a program that prints 'Hello, World!' to the console. Include comments
-                    to explain your code.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold border-b border-gray-300  pb-3 mb-4">
-                Your Submission
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 " htmlFor="description">
-                    Description (optional)
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    placeholder="Add a description for your submission..."
-                    rows={4}
-                    className="w-full rounded-lg border border-gray-300 bg-gray-200  transition p-2"
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Upload Files</label>
-                  <div className="flex justify-center items-center w-full bg-gray-100">
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col justify-center items-center w-full h-64  rounded-lg border-2 border-gray-300 cursor-pointer transition"
-                    >
-                      <div className="flex flex-col justify-center items-center pt-5 pb-6">
-                        <svg
-                          className="w-10 h-10 mb-3 text-muted-light dark:text-muted-dark"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h2l2-2h4l2 2h2a4 4 0 014 4v5a4 4 0 01-4 4H7z"
-                          ></path>
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          ></path>
-                        </svg>
-                        <p className="mb-2 text-sm text-muted-light dark:text-muted-dark">
-                          <span className="font-semibold">Click to upload</span> or drag and drop
-                        </p>
-                        <p className="text-xs text-muted-light dark:text-muted-dark">
-                          ZIP, PDF, or TXT (MAX. 10MB)
-                        </p>
-                      </div>
-                      <input id="dropzone-file" type="file" className="hidden" />
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 flex justify-end">
-            <button
-              type="submit"
-              className="bg-primary text-white bg-blue-700 font-bold py-2 px-6 rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-primary transition-all"
-            >
-              Submit Assignment
-            </button>
-          </div>
+      {assignments.length === 0 ? (
+        <p className="text-gray-500">No assignments available</p>
+      ) : (
+        <div className="overflow-hidden border border-gray-200 rounded-xl shadow-sm">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="text-left font-medium text-gray-700 px-6 py-3">Title</th>
+                <th className="text-left font-medium text-gray-700 px-6 py-3">Description</th>
+                <th className="text-left font-medium text-gray-700 px-6 py-3">Due Date</th>
+                <th className="text-left font-medium text-gray-700 px-6 py-3">Status</th>
+                <th className="text-left font-medium text-gray-700 px-6 py-3">View</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {assignments.map((a: any) => (
+                <tr key={a.id}>
+                  <td className="px-6 py-4 font-medium text-gray-900">{a.title}</td>
+                  <td className="px-6 py-4 text-gray-600">{a.description}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {new Date(a.dueDate).toLocaleDateString()}
+                  </td>
+                  <td >
+                    <span className="px-2 py-2 text-blue-600 bg-blue-100 rounded">
+                      {a.status}
+                    </span>
+                   
+                    </td>
+                  <td className="px-6 py-4 text-blue-600">
+                    <Link href={`/student/assignment/${a.id}`}>View</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </main>
-    </div>
+      )}
+    </section>
   );
 }
 export default StudentAssignmentPage

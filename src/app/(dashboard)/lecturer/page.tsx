@@ -1,100 +1,86 @@
+import CourseGrid from "@/app/components/CourseGrid";
+import { UserSection } from "@/app/components/UserSection";
 import Link from "next/link";
 
+interface AssignmentRes {
+  id: number;
+  courseId: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
+const LecturerDashboard = async () => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const [coursesRes, assignmentsRes] = await Promise.all([
+    fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
+    fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
+  ]);
 
- const LecturerDashboard = ()=> {
+  if (!coursesRes.ok || !assignmentsRes.ok) {
+    throw new Error(`Failed to fetch: courses (${coursesRes.status}) or students (${assignmentsRes.status})`);
+  }
+
+  const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
+  console.log(courses, assignments);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      
-      {/* Main Content */}
       <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
-        <p className="text-gray-600 mb-8">Welcome back, Dr. Harper</p>
+        <UserSection />
 
         {/* My Courses */}
         <section className="mb-10">
-          <h2 className="text-lg font-semibold mb-4">My Courses</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Introduction to Psychology',
-                code: 'PSY101 - Fall 2024',
-                image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
-              },
-              {
-                title: 'Advanced Statistics',
-                code: 'STA302 - Fall 2024',
-                image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3c',
-              },
-              {
-                title: 'Research Methods',
-                code: 'RES401 - Fall 2024',
-                image: 'https://images.unsplash.com/photo-1554774853-b414d2a2b4f4',
-              },
-            ].map((course) => (
-              <div
-                key={course.title}
-                className="bg-white shadow rounded-xl overflow-hidden hover:shadow-md transition"
-              >
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="w-full h-32 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-800">{course.title}</h3>
-                  <p className="text-gray-500 text-sm">{course.code}</p>
-                </div>
-              </div>
-            ))}
+          <div className="flex justify-between">
+            <h2 className="text-lg font-semibold mb-4">My Courses</h2>
+            <Link href={"/lecturer/courses"}>
+              <span className="text-blue-300">Sell all courses</span>
+            </Link>
           </div>
+
+          <CourseGrid apiEndpoint="/api/lecturer" limit={4} />
         </section>
 
         {/* Assignments to Grade */}
         <section className="mb-10">
           <h2 className="text-lg font-semibold mb-4">Assignments to Grade</h2>
-          <div className="bg-white rounded-xl shadow overflow-hidden">
+          <div className="bg-white rounded-sm shadow overflow-hidden">
             <table className="min-w-full text-sm text-gray-700">
               <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
                   <th className="py-3 px-6 text-left">Assignment</th>
                   <th className="py-3 px-6 text-left">Course</th>
                   <th className="py-3 px-6 text-left">Due Date</th>
-                  <th className="py-3 px-6 text-left">Submissions</th>
                   <th className="py-3 px-6 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {[
                   {
-                    name: 'Essay on Cognitive Development',
-                    course: 'PSY101',
-                    due: 'Oct 20, 2024',
-                    submissions: '25/30',
+                    name: "Essay on Cognitive Development",
+                    course: "PSY101",
+                    due: "Oct 20, 2024",
                   },
                   {
-                    name: 'Project Proposal',
-                    course: 'RES401',
-                    due: 'Nov 5, 2024',
-                    submissions: '18/20',
+                    name: "Project Proposal",
+                    course: "RES401",
+                    due: "Nov 5, 2024",
                   },
                   {
-                    name: 'Final Exam',
-                    course: 'STA302',
-                    due: 'Dec 15, 2024',
-                    submissions: '22/25',
+                    name: "Final Exam",
+                    course: "STA302",
+                    due: "Dec 15, 2024",
                   },
                 ].map((item) => (
                   <tr key={item.name} className="border-t">
                     <td className="py-3 px-6">{item.name}</td>
                     <td className="py-3 px-6">{item.course}</td>
                     <td className="py-3 px-6">{item.due}</td>
-                    <td className="py-3 px-6">{item.submissions}</td>
                     <td className="py-3 px-6 text-blue-600 font-medium hover:underline cursor-pointer">
-                      <Link href={'/lecturer/assignments'}>
-                       Grade
-                      </Link>
-                     
+                      <Link href={"/lecturer/assignments"}>Grade</Link>
                     </td>
                   </tr>
                 ))}
@@ -120,16 +106,16 @@ import Link from "next/link";
               <tbody>
                 {[
                   {
-                    student: 'Ethan Carter',
-                    assignment: 'Essay on Cognitive Development',
-                    course: 'PSY101',
-                    date: 'Oct 22, 2024',
+                    student: "Ethan Carter",
+                    assignment: "Essay on Cognitive Development",
+                    course: "PSY101",
+                    date: "Oct 22, 2024",
                   },
                   {
-                    student: 'Olivia Bennett',
-                    assignment: 'Project Proposal',
-                    course: 'RES401',
-                    date: 'Nov 7, 2024',
+                    student: "Olivia Bennett",
+                    assignment: "Project Proposal",
+                    course: "RES401",
+                    date: "Nov 7, 2024",
                   },
                 ].map((req) => (
                   <tr key={req.student} className="border-t">
@@ -138,12 +124,8 @@ import Link from "next/link";
                     <td className="py-3 px-6">{req.course}</td>
                     <td className="py-3 px-6">{req.date}</td>
                     <td className="py-3 px-6 space-x-2">
-                      <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium">
-                        Approve
-                      </button>
-                      <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-xs font-medium">
-                        Deny
-                      </button>
+                      <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium">Approve</button>
+                      <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-xs font-medium">Deny</button>
                     </td>
                   </tr>
                 ))}
@@ -154,5 +136,5 @@ import Link from "next/link";
       </main>
     </div>
   );
-}
-export default  LecturerDashboard
+};
+export default LecturerDashboard;

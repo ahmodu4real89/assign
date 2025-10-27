@@ -1,6 +1,9 @@
+"use client"
 import Link from "next/link";
+import { useUser } from "../context/UserContext";
 
 export const Navbar = () => {
+  const { logout } = useUser();
   return (
     <header className="bg-white backdrop-blur-sm sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,12 +78,12 @@ export const Navbar = () => {
                 }}
               ></div>
 
-              <Link
-              href="#"
+              <button
+              onClick={logout}
               className="px-4 py-2 text-sm font-bold rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-800 transition-colors"
             >
-              Login
-            </Link>
+              LogOut
+            </button>
             </div>
         </div>
       </div>

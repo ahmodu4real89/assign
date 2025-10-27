@@ -1,30 +1,42 @@
-  const StudentDashboard=()=> {
-  const courses = [
-    {
-      title: "Introduction to Programming",
-      professor: "Prof. Emily Carter",
-      image:
-        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Calculus I",
-      professor: "Prof. David Chen",
-      image:
-        "https://images.unsplash.com/photo-1522202224220-6f3e347c1f97?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Linear Algebra",
-      professor: "Prof. Michael Wong",
-      image:
-        "https://images.unsplash.com/photo-1509223197845-458d87318791?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Data Structures",
-      professor: "Prof. Olivia Davis",
-      image:
-        "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?auto=format&fit=crop&w=800&q=80",
-    },
-  ];
+"use client"
+import CourseGrid from "@/app/components/CourseGrid";
+import { UserSection } from "@/app/components/UserSection";
+
+
+
+interface AssignmentApiResponse {
+  id: number;
+  courseId: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+
+const StudentDashboard=  ()=> {
+
+//         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  
+//      const [coursesRes, assignmentsRes] = await Promise.all([
+//     fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
+//     fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
+//   ]);
+
+//     if (!coursesRes.ok || !assignmentsRes.ok) {
+//       throw new Error(
+//         `Failed to fetch: courses (${coursesRes.status}) or students (${assignmentsRes.status})`
+//       );
+//     }
+
+//   const [courses, assignments] = await Promise.all([
+//     coursesRes.json(),
+//     assignmentsRes.json(),
+//   ]);
+// console.log(courses, assignments)
+
+
 
   const deadlines = [
     {
@@ -77,32 +89,20 @@
         {/* Header */}
         <header className="mb-4">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Welcome back, Sarah Lee</p>
+          {/* <p className="text-gray-600 mt-1">Welcome back, {user?.name || "Student"}</p> */}
+          <UserSection />
         </header>
 
         {/* My Courses */}
         <section className="mb-10">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">My Courses</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.map((course, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-              >
-                <div
-                  className="w-full h-40 bg-center bg-cover"
-                  style={{ backgroundImage: `url(${course.image})` }}
-                ></div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-gray-500">{course.professor}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+         <CourseGrid
+          apiEndpoint="/api/course"
+          limit={4}  
+        />
         </section>
+
+          
 
         {/* Upcoming Deadlines & Recent Submissions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -187,5 +187,7 @@
       </div>
     </main>
   );
+
 }
+   
 export default StudentDashboard
