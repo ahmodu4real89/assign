@@ -1,8 +1,7 @@
 "use client";
-
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState} from "react";
 const RegisterForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();

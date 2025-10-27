@@ -43,7 +43,7 @@ export async function POST(req: Request) {
             { status: 201 }
         );
     } catch (error) {
-
+        console.log(error)
         return NextResponse.json(
             { error: "Failed to create course" },
             { status: 500 }
@@ -75,7 +75,7 @@ export async function GET(req:Request){
         })
         return NextResponse.json(course, {status: 200})
     } catch (error) {
-        
+        console.log(error)        
         return NextResponse.json(
             { error:  "Failed to fetch course" },
             { status: 500 }
