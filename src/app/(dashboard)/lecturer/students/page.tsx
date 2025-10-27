@@ -7,7 +7,7 @@ interface Student {
   age: string;
 }
 const Student = async () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const res = await fetch(`${baseUrl}/api/register`, { cache: "force-cache" });
   if (!res.ok) {
     throw new Error("Failed to fetch students");
