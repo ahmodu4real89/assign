@@ -64,7 +64,7 @@ const  CoursePage = ()=> {
 
   useEffect(() => {
     if (id) fetchCourse();
-  }, [id, fetchCourse]); // ✅ no ESLint warning now
+  }, [id, fetchCourse]); 
 
   if (loading) return <p>Loading course details...</p>;
   if (!course) return <p>Course not found</p>;
