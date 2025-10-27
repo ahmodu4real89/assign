@@ -42,10 +42,10 @@ export async function POST(req: Request) {
             { message: "Course created successfully", course },
             { status: 201 }
         );
-    } catch (error: any) {
+    } catch (error) {
 
         return NextResponse.json(
-            { error: error.message || "Failed to create course" },
+            { error: "Failed to create course" },
             { status: 500 }
         );
     }

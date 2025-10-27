@@ -2,19 +2,6 @@
 import CourseGrid from "@/app/components/CourseGrid";
 import { UserSection } from "@/app/components/UserSection";
 
-
-
-interface AssignmentApiResponse {
-  id: number;
-  courseId: number;
-  title: string;
-  description: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-
 const StudentDashboard=  ()=> {
 
 //         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";

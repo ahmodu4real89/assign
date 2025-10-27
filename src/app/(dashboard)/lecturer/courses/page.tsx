@@ -5,15 +5,30 @@ import CourseGrid from "@/app/components/CourseGrid";
 import { useUser } from "@/app/context/UserContext";
 import { useState } from "react";
 
+
+export interface CourseRes {
+  id: number;
+  courseName: string;
+  courseCode: string;
+   description: string;
+  image?: string;
+  lecturer?: {
+    name: string;
+    email: string;
+  };
+}
+
+
+
 export default function Course() {
   const { user } = useUser();
-  const [editCourse, setEditCourse] = useState<any | null>(null);
+  const [editCourse, setEditCourse] = useState<CourseRes | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => setRefreshKey((prev) => prev + 1);
 
-  const handleEdit = (course: any) => {
+  const handleEdit = (course: CourseRes) => {
     setEditCourse(course);
     setShowModal(true);
   };

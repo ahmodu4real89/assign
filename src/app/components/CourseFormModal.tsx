@@ -10,7 +10,7 @@ interface CourseFormModalProps {
   initialData?: {
     id?: number;
     courseName: string;
-    courseCode?: string;
+    courseCode: string;
     description: string;
   };
 }

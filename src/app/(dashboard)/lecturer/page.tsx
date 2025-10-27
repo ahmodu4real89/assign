@@ -1,30 +1,21 @@
+
 import CourseGrid from "@/app/components/CourseGrid";
 import { UserSection } from "@/app/components/UserSection";
 import Link from "next/link";
 
-interface AssignmentRes {
-  id: number;
-  courseId: number;
-  title: string;
-  description: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 const LecturerDashboard = async () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
-  const [coursesRes, assignmentsRes] = await Promise.all([
-    fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
-    fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
-  ]);
+  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  // const [coursesRes, assignmentsRes] = await Promise.all([
+  //   fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
+  //   fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
+  // ]);
 
-  if (!coursesRes.ok || !assignmentsRes.ok) {
-    throw new Error(`Failed to fetch: courses (${coursesRes.status}) or students (${assignmentsRes.status})`);
-  }
+  // if (!coursesRes.ok || !assignmentsRes.ok) {
+  //   throw new Error(`Failed to fetch: courses (${coursesRes.status}) or students (${assignmentsRes.status})`);
+  // }
 
-  const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
-  console.log(courses, assignments);
+  // const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
+  
 
   return (
     <div className="flex min-h-screen bg-gray-50">

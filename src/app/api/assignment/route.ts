@@ -6,8 +6,7 @@ export async function POST(req:Request){
     try {
         const body = await req.json();
         const { courseId, title, description, dueDate} = body
-         console.log("📩 Request body:", body);
-        
+      
     if (!courseId || !title || !description || !dueDate) {
       return NextResponse.json(
         { error: "All fields (courseId, title, description, dueDate) are required" },
@@ -32,7 +31,7 @@ export async function POST(req:Request){
       { status: 201 }
     );
   } catch (error) {
-       
+       console.log(error)
     return NextResponse.json({ error: "Failed to create assignment" }, { status: 500 });
   }
 }
@@ -55,7 +54,7 @@ export async function POST(req:Request){
 
 
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const assignments = await prisma.assignment.findMany({
       include: {

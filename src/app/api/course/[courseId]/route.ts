@@ -39,16 +39,8 @@ export async function DELETE(
       { message: `Course '${existingCourse.courseName}' deleted successfully.` },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting course:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { error: "Course not found" },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(
       { error: "Failed to delete course" },
       { status: 500 }

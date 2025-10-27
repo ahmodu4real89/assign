@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import Link from "next/link";
+import Image from "next/image";
 export interface CourseRes {
   id: number;
   courseName: string;
-  courseCode?: string;
+  courseCode: string;
+   description: string;
   image?: string;
   lecturer?: {
     name: string;
@@ -54,9 +56,35 @@ export default function CourseGrid({
       ? `${apiEndpoint}?lecturerId=${user.id}${limit ? `&limit=${limit}` : ""}`
       : `${apiEndpoint}${limit ? `?limit=${limit}` : ""}`;
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if (user?.role === "LECTURER" && !user.id) return;
+  // if (!apiEndpoint) return;
+
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const res = await fetch(finalEndpoint);
+  //       if (!res.ok) throw new Error("Failed to fetch courses");
+  //       const data = await res.json();
+
+  //       const withImages = data.map((c: CourseRes) => ({
+  //         ...c,
+  //         image: c.image || getRandomImage(),
+  //       }));
+
+  //       setCourses(withImages);
+  //     } catch (error) {
+  //       console.error("Error fetching courses:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCourses();
+  // }, [finalEndpoint]);
+
+    useEffect(() => {
     if (user?.role === "LECTURER" && !user.id) return;
-  if (!apiEndpoint) return;
+    if (!apiEndpoint) return;
 
     const fetchCourses = async () => {
       try {
@@ -78,7 +106,8 @@ export default function CourseGrid({
     };
 
     fetchCourses();
-  }, [finalEndpoint]);
+  }, [apiEndpoint, user?.role, user?.id, finalEndpoint]);
+
 
   if (loading) return <p>Loading courses...</p>;
 
@@ -93,7 +122,9 @@ export default function CourseGrid({
               key={course.id}
               className="bg-white shadow rounded-xl overflow-hidden hover:shadow-md transition"
             >
-              <img
+              <Image
+               width={300}
+      height={300}
                 src={course.image}
                 alt={course.courseName}
                 className="w-full h-32 object-cover"
