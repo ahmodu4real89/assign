@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface AssignmentModalProps {
   isOpen: boolean;
@@ -63,15 +64,15 @@ export default function AssignmentFormModal({
       });
 
       if (res.ok) {
-        alert(isEditMode ? "✅ Course updated successfully!" : "✅ Course created successfully!");
+        toast.success(isEditMode ? "✅ Course updated successfully!" : "✅ Course created successfully!")
         onClose();
         onSuccess?.();
       } else {
-        alert("❌ Something went wrong");
+        toast.error("❌ Something went wrong")
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An unexpected error occurred");
+      toast.error("An unexpected error occurred")
     } finally {
       setLoading(false);
     }

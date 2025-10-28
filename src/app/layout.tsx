@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {  Inter } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "./context/UserContext";
+import ToastProvider from "./lib/ToastProvider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased`}
       >
+        <ToastProvider />
          <UserProvider>
           {children}
         </UserProvider>

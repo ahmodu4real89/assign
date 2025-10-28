@@ -4,6 +4,7 @@ import CourseFormModal from "@/app/components/CourseFormModal";
 import CourseGrid from "@/app/components/CourseGrid";
 import { useUser } from "@/app/context/UserContext";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 
 export interface CourseRes {
@@ -39,10 +40,11 @@ export default function Course() {
     try {
       const res = await fetch(`/api/course/${id}`, { method: "DELETE" });
       if (res.ok) {
-        alert("Course deleted successfully!");
+        toast.success("Course deleted successfully!")
         handleRefresh();
       } else {
-        alert("Failed to delete course");
+  
+        toast.error("Failed to delete course")
       }
     } catch (error) {
       console.error("Delete error:", error);
