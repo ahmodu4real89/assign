@@ -1,28 +1,23 @@
 "use client";
+
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { registerSchema } from "@/app/lib/validations";
+
 const RegisterForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const roleParam = searchParams.get("role");
+  const [role, setRole] = useState(roleParam || localStorage.getItem("role") || "STUDENT");
 
-  // const role = searchParams.get("role") || localStorage.getItem("role") || "STUDENT";
-
-  // useEffect(() => {
-  //   if (role) localStorage.setItem("role", role);
-  // }, [role]);
-
-
-const roleParam = searchParams.get("role");
-const [role, setRole] = useState(roleParam || localStorage.getItem("role") || "STUDENT");
-
-useEffect(() => {
-  if (roleParam) {
-    setRole(roleParam);
-    localStorage.setItem("role", roleParam);
-  }
-}, [roleParam]);
-
+  useEffect(() => {
+    if (roleParam) {
+      setRole(roleParam);
+      localStorage.setItem("role", roleParam);
+    }
+  }, [roleParam]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -35,43 +30,43 @@ useEffect(() => {
     role: role,
   });
 
-    
-
-  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simple password confirmation
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("❌ Passwords do not match.");
+    const validation = registerSchema.safeParse(formData);
+
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.issues.forEach((issue) => {
+        const field = issue.path[0] as string;
+        fieldErrors[field] = issue.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
+    setErrors({});
+    setLoading(true);
+
     try {
-      setLoading(true);
-      setMessage("");
-      const payload = {
-    ...formData,
-    age: Number(formData.age), 
-  };
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...validation.data, age: Number(formData.age) }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("✅ " + data.message);
-
-        // Reset form
+        toast.success(data.message || "Account created successfully!");
         setFormData({
           name: "",
           email: "",
@@ -82,29 +77,27 @@ useEffect(() => {
           confirmPassword: "",
           role: role,
         });
-
-        // Wait a bit, then redirect to login page
         setTimeout(() => {
           router.push(`/login?role=${role}`);
-        }, 1500);
+        }, 1200);
       } else {
-        setMessage("❌ " + (data.error || "Registration failed."));
+        toast.error(data.error || "Registration failed");
       }
     } catch (error) {
       console.error(error);
-      setMessage("❌ Something went wrong during signup.");
+      toast.error("Something went wrong during signup.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-  
-           <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
-        {/* Header */}
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white">Create your {role.toLowerCase()} account</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white">
+            Create your {role.toLowerCase()} account
+          </h2>
           <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
             Already have an account?{" "}
             <Link
@@ -116,110 +109,99 @@ useEffect(() => {
           </p>
         </div>
 
-        {/* Form */}
-        <form className="mt-8 space-y-6" method="POST" onSubmit={handleSignup}>
+        <form className="mt-8 space-y-6" onSubmit={handleSignup}>
           <div className="space-y-4">
-            {/* Full Name */}
-            <input
-              name="name"
-              type="text"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Full Name"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
+            {[
+              { name: "name", placeholder: "Full Name", type: "text" },
+              { name: "email", placeholder: "Email address", type: "email" },
+              { name: "phoneNumber", placeholder: "Phone Number", type: "tel" },
+              { name: "age", placeholder: "Age", type: "number" },
+            ].map((field) => (
+              <div key={field.name}>
+                <input
+                  {...field}
+                  value={formData[field.name as keyof typeof formData]}
+                  onChange={handleChange}
+                  className={`appearance-none rounded-lg relative block w-full px-3 py-3 border ${
+                    errors[field.name]
+                      ? "border-red-500"
+                      : "border-slate-300 dark:border-slate-700"
+                  } bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
+                />
+                {errors[field.name] && (
+                  <p className="mt-1 text-sm text-red-500">{errors[field.name]}</p>
+                )}
+              </div>
+            ))}
 
-            {/* Email */}
-            <input
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email address"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
-
-            {/* Phone Numbeer */}
-            <input
-              name="phoneNumber"
-              type="tel"
-              required
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="PhoneNumber"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
-
-            {/* Age */}
-            <input
-              name="age"
-              type="number"
-              required
-              value={formData.age}
-              onChange={handleChange}
-              placeholder="Age"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
-
-            <select
-              name="sex"
-              id="sex"
-             value={formData.sex}
-             onChange={(e) => setFormData({ ...formData, sex: e.target.value })}
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            >
-              <option value="" disabled>Select Gender</option>
-              <option value="MALE">MALE</option>
-              <option value="FEMALE">FEMALE</option>
-            </select>
+            {/* Gender */}
+            <div>
+              <select
+                name="sex"
+                value={formData.sex}
+                onChange={handleChange}
+                className={`appearance-none rounded-lg relative block w-full px-3 py-3 border ${
+                  errors.sex ? "border-red-500" : "border-slate-300 dark:border-slate-700"
+                } bg-gray-50 dark:bg-gray-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
+              >
+                <option value="">Select Gender</option>
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+              </select>
+              {errors.sex && <p className="mt-1 text-sm text-red-500">{errors.sex}</p>}
+            </div>
 
             {/* Password */}
-            <input
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
+            <div>
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className={`appearance-none rounded-lg relative block w-full px-3 py-3 border ${
+                  errors.password ? "border-red-500" : "border-slate-300 dark:border-slate-700"
+                } bg-gray-50 dark:bg-gray-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
 
             {/* Confirm Password */}
-            <input
-              name="confirmPassword"
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm Password"
-              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-gray-50 dark:bg-gray-900 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            />
+            <div>
+              <input
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={`appearance-none rounded-lg relative block w-full px-3 py-3 border ${
+                  errors.confirmPassword
+                    ? "border-red-500"
+                    : "border-slate-300 dark:border-slate-700"
+                } bg-gray-50 dark:bg-gray-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
+              />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+              )}
+            </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white transition-colors ${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className={`w-full flex justify-center py-3 px-4 text-sm font-bold rounded-lg text-white ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             }`}
           >
             {loading ? "Registering..." : "Register"}
           </button>
-
-          {/* Message */}
-          {message && (
-            <p className={`text-center text-sm mt-2 ${message.startsWith("✅") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-              {message}
-            </p>
-          )}
         </form>
       </div>
     </main>
-    
-   
   );
 };
 
