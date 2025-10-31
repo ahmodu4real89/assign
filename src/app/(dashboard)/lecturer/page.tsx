@@ -6,7 +6,7 @@ import Link from "next/link";
 
 
 const LecturerDashboard = async () => {
-  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   // const [coursesRes, assignmentsRes] = await Promise.all([
   //   fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
   //   fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
@@ -19,7 +19,7 @@ const LecturerDashboard = async () => {
   // const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
   
   
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/assignment`, { cache: "no-store" })
     const deadlines:deadline[] = await response.json()
   
