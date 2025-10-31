@@ -6,20 +6,9 @@ import Link from "next/link";
 
 
 const LecturerDashboard = async () => {
-  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  // const [coursesRes, assignmentsRes] = await Promise.all([
-  //   fetch(`${baseUrl}/api/course?limit=4`, { cache: "no-store" }),
-  //   fetch(`${baseUrl}/api/assignment`, { cache: "no-store" }),
-  // ]);
-
-  // if (!coursesRes.ok || !assignmentsRes.ok) {
-  //   throw new Error(`Failed to fetch: courses (${coursesRes.status}) or students (${assignmentsRes.status})`);
-  // }
-
-  // const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
+  const baseUrl = process.env.VERCEL_URL? `https://${process.env.VERCEL_URL}`: "http://localhost:3000";
   
-  
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+    //const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
     const response = await fetch(`${baseUrl}/api/assignment`, { cache: "no-store" })
     const deadlines:deadline[] = await response.json()
   
