@@ -5,7 +5,7 @@ import { Assignment } from "@/app/lib/types";
 
 const AssignmentGradingPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id =  parseInt((await params).id);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
 
   const res = await fetch(`${baseUrl}/api/submission?assignmentId=${id}`, {
     cache: "no-store",
