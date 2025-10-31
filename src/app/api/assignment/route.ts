@@ -36,23 +36,6 @@ export async function POST(req:Request){
   }
 }
 
-// export async function GET(req:Request){
-//   try {
-
-//     const assignments = await prisma.assignment.findMany({
-//       include:{
-//         course:true
-//       }
-//     })
-//     return NextResponse.json(assignments, {status: 200 })
-    
-//   } catch (error) {
-//      return NextResponse.json({ error: "Failed to fetch assignment" }, { status: 500 });
-//   }
-// }
-
-
-
 
 export async function GET() {
   try {

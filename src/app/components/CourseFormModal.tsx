@@ -72,6 +72,7 @@ export default function CourseFormModal({
       }
     } catch (error) {
       console.error("Error:", error);
+
       toast.error("An unexpected error occurred")
     } finally {
       setLoading(false);

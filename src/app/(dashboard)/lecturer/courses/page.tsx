@@ -3,21 +3,9 @@
 import CourseFormModal from "@/app/components/CourseFormModal";
 import CourseGrid from "@/app/components/CourseGrid";
 import { useUser } from "@/app/context/UserContext";
+import { CourseRes } from "@/app/lib/types";
 import { useState } from "react";
 import { toast } from "react-toastify";
-
-
-export interface CourseRes {
-  id: number;
-  courseName: string;
-  courseCode: string;
-   description: string;
-  image?: string;
-  lecturer?: {
-    name: string;
-    email: string;
-  };
-}
 
 
 

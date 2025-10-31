@@ -7,6 +7,7 @@ interface AssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   courseId?:number;
+  onDelete?: (assignmentId: number) => void;
   onSuccess?: () => void;
   initialData?: {
     id?: number;

@@ -75,3 +75,52 @@ export async function PUT(
     );
   }
 }
+
+
+// DELETE /api/assignments/[id]
+export async function DELETE(
+  request: Request,
+   context: { params: Promise<{ id: string }> }
+) {
+  try {
+
+     const { id } = await context.params;
+    const assignmentId = Number(id);
+
+
+    if (isNaN(assignmentId)) {
+      return NextResponse.json(
+        { error: "Invalid assignment ID" },
+        { status: 400 }
+      );
+    }
+
+    // Check if assignment exists
+    const existingAssignment = await prisma.assignment.findUnique({
+      where: { id: assignmentId },
+    });
+
+    if (!existingAssignment) {
+      return NextResponse.json(
+        { error: "Assignment not found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete the assignment
+    await prisma.assignment.delete({
+      where: { id: assignmentId },
+    });
+
+    return NextResponse.json(
+      { message: "Assignment deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting assignment:", error);
+    return NextResponse.json(
+      { error: "Failed to delete assignment" },
+      { status: 500 }
+    );
+  }
+}

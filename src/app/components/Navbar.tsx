@@ -49,6 +49,13 @@ export const Navbar = () => {
             </Link>
 
               <Link
+              href="/student/extension"
+              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              Request Extension
+            </Link>
+
+              <Link
               href="/student/grades"
               className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >

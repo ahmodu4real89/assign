@@ -1,7 +1,9 @@
-
 import CourseGrid from "@/app/components/CourseGrid";
 import { UserSection } from "@/app/components/UserSection";
+import { deadline } from "@/app/lib/types";
 import Link from "next/link";
+
+
 
 const LecturerDashboard = async () => {
   // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
@@ -16,6 +18,18 @@ const LecturerDashboard = async () => {
 
   // const [courses, assignments] = await Promise.all([coursesRes.json(), assignmentsRes.json()]);
   
+  
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+    const response = await fetch(`${baseUrl}/api/assignment`, { cache: "no-store" })
+    const deadlines:deadline[] = await response.json()
+  
+      if ( !deadlines) {
+        throw new Error(
+          `Failed to fetch:  students (${deadlines})`
+        );
+      }
+  
+
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -49,29 +63,16 @@ const LecturerDashboard = async () => {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    name: "Essay on Cognitive Development",
-                    course: "PSY101",
-                    due: "Oct 20, 2024",
-                  },
-                  {
-                    name: "Project Proposal",
-                    course: "RES401",
-                    due: "Nov 5, 2024",
-                  },
-                  {
-                    name: "Final Exam",
-                    course: "STA302",
-                    due: "Dec 15, 2024",
-                  },
-                ].map((item) => (
-                  <tr key={item.name} className="border-t">
-                    <td className="py-3 px-6">{item.name}</td>
-                    <td className="py-3 px-6">{item.course}</td>
-                    <td className="py-3 px-6">{item.due}</td>
+                {deadlines.map((item:deadline) => (
+                  <tr key={item.id} className="border-t">
+                    <td className="py-3 px-6">{item.title}</td>
+                    <td className="py-3 px-6">{item.course.courseCode}</td>
+                    <td className="py-3 px-6">
+                          {new Date(item.dueDate).toLocaleDateString()}
+                    </td>
                     <td className="py-3 px-6 text-blue-600 font-medium hover:underline cursor-pointer">
-                      <Link href={"/lecturer/assignments"}>Grade</Link>
+                      <Link href={`/lecturer/assignments/${item.id}`}>Grade</Link>
+                      
                     </td>
                   </tr>
                 ))}

@@ -60,7 +60,7 @@ const LoginPage = () => {
       const data = await res.json();
 
       if (res.ok && data.user) {
-        toast.success("Login successful! 🎉");
+        toast.success("Login successful!");
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
 
