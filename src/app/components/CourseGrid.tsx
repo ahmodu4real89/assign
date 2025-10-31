@@ -4,30 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import Link from "next/link";
 import Image from "next/image";
-export interface CourseRes {
-  id: number;
-  courseName: string;
-  courseCode: string;
-   description: string;
-  image?: string;
-  lecturer?: {
-    name: string;
-    email: string;
-  };
-}
-
-export interface CourseWithImage extends CourseRes {
-  image: string;
-}
-
-interface CourseGridProps {
-  apiEndpoint: string;
-  title?: string;
-  limit?: number;
- linkPrefix?: string;
-  onEdit?: (course: CourseRes) => void;
-  onDelete?: (courseId: number) => void;
-}
+import { CourseGridProps, CourseRes, CourseWithImage } from "../lib/types";
 
 const randomImages = [
   "https://picsum.photos/300/200?random=1",

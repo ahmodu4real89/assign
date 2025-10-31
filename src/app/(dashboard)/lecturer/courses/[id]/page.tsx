@@ -5,27 +5,10 @@ import { useParams } from "next/navigation";
 import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import Link from "next/link";
+import { Assignment, CourseRes } from "@/app/lib/types";
 
-interface Assignment {
-  id: number;
-  title: string;
-  description: string;
-  dueDate: string;
-}
-
-interface Lecturer {
-  id: number;
-  name: string;
-  email: string;
-}
-
-interface CourseApiResponse {
-  id: number;
-  courseName: string;
-  description: string;
-  lecturer: Lecturer;
-  assignments: Assignment[];
-}
 
 
 
@@ -34,7 +17,7 @@ const  CoursePage = ()=> {
   const {user}= useUser()
      const params = useParams()
   const id = Number(params.id); 
-  const [course, setCourse] = useState<CourseApiResponse>();
+  const [course, setCourse] = useState<CourseRes>();
   const [loading, setLoading] = useState(true);
     const [editCourse, setEditCourse] = useState<Assignment | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -44,6 +27,25 @@ const  CoursePage = ()=> {
     setEditCourse(assignment);
     setShowModal(true);
   };
+
+
+  
+    const handleDelete = async (id: number) => {
+      if (!confirm("Are you sure you want to delete this course?")) return;
+  
+      try {
+        const res = await fetch(`/api/assignment/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          toast.success("Course deleted successfully!")
+          handleRefresh();
+        } else {
+    
+          toast.error("Failed to delete course")
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+      }
+    };
 
     const fetchCourse = useCallback(async () => {
     try {
@@ -129,6 +131,7 @@ const  CoursePage = ()=> {
                     <th className="text-left font-medium text-gray-700 px-6 py-3">Description</th>
                     <th className="text-left font-medium text-gray-700 px-6 py-3">Due Date</th>
                     <th className="text-left font-medium text-gray-700 px-6 py-3">view</th>
+                    <th className="text-left font-medium text-gray-700 px-6 py-3">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -140,12 +143,23 @@ const  CoursePage = ()=> {
                         {new Date(a.dueDate).toLocaleDateString()}
                       </td>
                     
-                        <td className=" text-blue-600">
+                        <td className=" text-blue-600 flex  gap-4 mt-4 font-semibold">
                           <button onClick={()=>handleEdit(a)} >
                             Edit
                           </button>
+
+                           <button onClick={()=>handleDelete(a.id)} className="text-red-400">
+                            Delete
+                          </button>
                           
                           </td>
+
+                          <td className="px-6 py-4 text-gray-600">
+                            <Link href={`/lecturer/assignments/${a.id}`}>
+                            Grade
+                            </Link>
+                            
+                            </td>
                     </tr>
                   ))}
                 </tbody>
@@ -160,6 +174,7 @@ const  CoursePage = ()=> {
               isOpen={showModal}
               onClose={() => setShowModal(false)}
               courseId={id}
+              onDelete={handleDelete}
               initialData={editCourse || undefined}
               onSuccess={() => {
                 handleRefresh();

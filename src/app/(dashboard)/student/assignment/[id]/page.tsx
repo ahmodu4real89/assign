@@ -1,31 +1,13 @@
  "use client"
 
+import { Assignment } from "@/app/lib/types";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
-export interface Course {
-  id: number;
-  courseName: string;
-  lecturerId: number;
-  createdAt: string;
-  updatedAt: string;  
-};
-
-interface AssignmentApiResponse {
-  id: number;
-  course: Course;
-  courseId: number;
-  title: string;
-  description: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-};
 
 const  StudentAssignmentPage=()=> {
      const params = useParams()
       const id = Number(params.id); 
-      const [assignment, setAssignment] = useState<AssignmentApiResponse>();
+      const [assignment, setAssignment] = useState<Assignment>();
       const [loading, setLoading] = useState(true);
 
     
@@ -35,7 +17,7 @@ const  StudentAssignmentPage=()=> {
         
             const res = await fetch(`/api/assignment/${id}`);
             if (!res.ok) throw new Error("Failed to fetch assignment");
-            const data: AssignmentApiResponse = await res.json();
+            const data: Assignment = await res.json();
             console.log(data, 'dats')
             setAssignment(data);
           } catch (error) {

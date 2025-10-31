@@ -14,7 +14,7 @@ const menuItem = [
   },
   {
     icon: "/assignment.png",
-    label: "Assignments",
+    label: "Extension Request",
     href: "/lecturer/assignments",
   },
   {

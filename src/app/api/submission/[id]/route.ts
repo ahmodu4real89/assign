@@ -2,36 +2,74 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
 
-
-export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+ //api/submission/1
+// export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   
-  const {id} = await context.params;
-    const lecturerId = Number(id);
+//   const {id} = await context.params;
+//     const lecturerId = Number(id);
+//   try {
+//     const submissions = await prisma.submission.findMany({
+//       where: {
+//         assignment: {
+//           course: {
+//             lecturerId, 
+//           },
+//         },
+//       },
+//       include: {
+//         student: {
+//           select: { id: true, name: true, email: true },
+//         },
+//         assignment: {
+//           select: { id: true, title: true, course: true },
+//         },
+        
+//       },
+//     });
+
+//     return NextResponse.json(submissions);
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json({ message: "Error fetching submissions" }, { status: 500 });
+//   }
+// };
+
+
+ //api/submission/studentId
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
+  const studentId = Number(id);
+
   try {
     const submissions = await prisma.submission.findMany({
       where: {
+        studentId, 
+      },
+      include: {
         assignment: {
-          course: {
-            lecturerId, 
+          include: {
+            course: {
+              select: { id: true, courseName: true },
+            },
           },
         },
       },
-      include: {
-        student: {
-          select: { id: true, name: true, email: true },
-        },
-        assignment: {
-          select: { id: true, title: true, course: true },
-        },
-      },
+      orderBy: { submissionDate: "desc" },
     });
 
     return NextResponse.json(submissions);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: "Error fetching submissions" }, { status: 500 });
+    console.error("Error fetching student submissions:", error);
+    return NextResponse.json(
+      { message: "Error fetching submissions" },
+      { status: 500 }
+    );
   }
-};
+}
+
 
 
 
@@ -94,4 +132,6 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       { status: 500 }
     );
   }
-}
+};
+
+
