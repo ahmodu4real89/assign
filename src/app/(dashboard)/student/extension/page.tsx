@@ -1,10 +1,37 @@
 "use client";
-import React, { useState } from "react";
+
+
+import React, { useEffect, useState } from "react";
 
 const RequestExtensionForm = () => {
   const [assignment, setAssignment] = useState("");
   const [reason, setReason] = useState("");
-  const [newDeadline, setNewDeadline] = useState("");
+  const [newDeadline, setNewDeadline] = useState("");  
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      async function fetchAssignments() {
+        try {
+          const res = await fetch("/api/assignment", { cache: "no-store" });
+  
+          if (!res.ok) {
+            throw new Error(`Failed to fetch assignments: ${res.statusText}`);
+          }
+  
+          const data = await res.json();
+          setAssignment(data);
+        } catch (err) {
+          console.log("Error fetching assignments:", err);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchAssignments();
+    }, []);
+  
+    if (loading) return <p className="text-gray-500">Loading assignments...</p>;
+  
   
 
   const handleSubmit = (e: React.FormEvent) => {
